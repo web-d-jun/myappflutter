@@ -7,7 +7,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({key});
+  const MyApp({Key key}) : super(key: key);
 
   // This widget is the root of your application.
   @override
@@ -27,21 +27,36 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: Scaffold(
-        body: RandomWords(),
+        appBar: AppBar(
+          title: const Text("test app"),
+        ),
+        body: const Center(child: RandomWords()),
       ),
     );
   }
 }
 
 class RandomWordsState extends State<RandomWords> {
+  final _suggestions = <WordPair>[];
   @override
   Widget build(BuildContext context) {
-    final wordPair = WordPair.random();
-    return Text(wordPair.asPascalCase);
+    return ListView.builder(
+      itemBuilder: (context, i) {
+        if (i.isOdd) return const Divider();
+        final index = i ~/ 2;
+        print("${i}");
+        print(index);
+        return ListTile(
+          title: Text("${i}"),
+        );
+      },
+    );
   }
 }
 
 class RandomWords extends StatefulWidget {
+  const RandomWords({Key key}) : super(key: key);
+
   @override
   RandomWordsState createState() => RandomWordsState();
 }
