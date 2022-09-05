@@ -25,6 +25,10 @@ class MyApp extends StatelessWidget {
           // or simply save your changes to "hot reload" in a Flutter IDE).
           // Notice that the counter didn't reset back to zero; the application
           // is not restarted.
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Colors.white,
+            foregroundColor: Colors.black,
+          ),
           primarySwatch: Colors.blue,
         ),
         home: const RandomWords());
@@ -37,9 +41,9 @@ class RandomWordsState extends State<RandomWords> {
 
   void _pushSaved() {
     Navigator.push(
-      this.context,
+      context,
       MaterialPageRoute(
-        builder: (context) => savedSuggestionsRoute(),
+        builder: (context) => savedSuggestionsRoute(_saved),
       ),
     );
   }
@@ -47,14 +51,17 @@ class RandomWordsState extends State<RandomWords> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("test app"),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.list),
-            onPressed: _pushSaved,
-          )
-        ],
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(50.0),
+        child: AppBar(
+          title: const Text("test app"),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.list),
+              onPressed: _pushSaved,
+            )
+          ],
+        ),
       ),
       body: ListView.builder(
         itemBuilder: (context, i) {
@@ -100,17 +107,28 @@ class RandomWords extends StatefulWidget {
 }
 
 class savedSuggestionsRoute extends StatelessWidget {
-  const savedSuggestionsRoute({Key key}) : super(key: key);
+  final List<WordPair> _saved;
+  const savedSuggestionsRoute(this._saved);
 
   @override
   Widget build(BuildContext context) {
+    final tiles = _saved.map((pair) {
+      return ListTile(
+        title: Text(
+          pair.asPascalCase,
+        ),
+      );
+    });
+
+    final divided = tiles.isNotEmpty
+        ? ListTile.divideTiles(context: context, tiles: tiles).toList()
+        : <Widget>[];
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("savedSuggestions"),
-      ),
-      body: const Center(
-        child: Text("savedSuggestions"),
-      ),
-    );
+        appBar: AppBar(
+          title: const Text("savedSuggestions"),
+        ),
+        body: ListView(
+          children: divided,
+        ));
   }
 }
